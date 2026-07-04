@@ -477,118 +477,57 @@
       .modal { border-radius: 20px; max-height: 85vh; }
     }
 
-    /* ── TELA BIOMETRIA ─────────────────────────────────────── */
-    .biometric-screen {
+    /* ── MINI POPUP RENOVAR SESSÃO ──────────────────────────── */
+    .renew-overlay {
       position: fixed; inset: 0;
-      background: var(--bg);
+      background: rgba(0,0,0,.6);
+      backdrop-filter: blur(6px);
       z-index: 500;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 32px;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 0;
+    }
+    .renew-overlay.hidden { display: none; }
+    .renew-box {
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid var(--border);
+      padding: 28px 24px 40px;
+      width: 100%; max-width: 480px;
       text-align: center;
-      gap: 20px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      animation: slideUp .25s ease;
     }
-    .biometric-screen.hidden { display: none; }
-
-    .face-icon {
-      width: 90px; height: 90px;
-      border-radius: 24px;
-      background: var(--card);
-      border: 2px solid var(--accent);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 44px;
-      box-shadow: 0 0 40px rgba(124,106,247,.3);
-      animation: pulse 2s infinite;
+    .renew-box h3 { font-size: 18px; font-weight: 700; }
+    .renew-box p  { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 280px; }
+    .btn-renew {
+      background: #fff; color: #222;
+      border: none; border-radius: 12px;
+      padding: 13px 24px; font-size: 15px; font-weight: 600;
+      cursor: pointer; width: 100%;
+      box-shadow: 0 2px 12px rgba(0,0,0,.15);
+      transition: transform .15s;
     }
-    @keyframes pulse {
-      0%, 100% { box-shadow: 0 0 24px rgba(124,106,247,.3); }
-      50%       { box-shadow: 0 0 48px rgba(124,106,247,.6); }
-    }
-    .biometric-screen h2 { font-size: 22px; font-weight: 700; }
-    .biometric-screen p  { color: var(--muted); font-size: 14px; line-height: 1.6; max-width: 260px; }
-
-    .btn-biometric {
-      display: flex; align-items: center; gap: 10px;
-      background: var(--accent);
-      color: #fff;
-      border: none; border-radius: 14px;
-      padding: 15px 28px;
-      font-size: 16px; font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 20px rgba(124,106,247,.4);
-      transition: transform .15s, box-shadow .15s;
-    }
-    .btn-biometric:hover { transform: translateY(-1px); box-shadow: 0 6px 28px rgba(124,106,247,.6); }
-
+    .btn-renew:hover { transform: translateY(-1px); }
     .btn-skip {
       background: none; border: none;
       color: var(--muted); font-size: 13px;
-      cursor: pointer; text-decoration: underline;
-      padding: 4px;
-    }
-
-    /* tela de configurar biometria (pós primeiro login) */
-    .setup-biometric {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.75);
-      backdrop-filter: blur(8px);
-      z-index: 600;
-      display: flex; align-items: center; justify-content: center;
-      padding: 24px;
-    }
-    .setup-biometric.hidden { display: none; }
-    .setup-box {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      padding: 28px 24px;
-      width: 100%; max-width: 340px;
-      text-align: center;
-      display: flex; flex-direction: column; align-items: center; gap: 16px;
-    }
-    .setup-box .face-icon { width: 72px; height: 72px; font-size: 34px; }
-    .setup-box h3 { font-size: 18px; font-weight: 700; }
-    .setup-box p  { color: var(--muted); font-size: 13px; line-height: 1.6; }
-    .setup-btns { display: flex; flex-direction: column; gap: 8px; width: 100%; }
-    .btn-enable-bio {
-      background: var(--accent); color: #fff;
-      border: none; border-radius: 12px;
-      padding: 13px; font-size: 15px; font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-not-now {
-      background: none; color: var(--muted);
-      border: 1px solid var(--border); border-radius: 12px;
-      padding: 11px; font-size: 14px;
-      cursor: pointer;
+      cursor: pointer; text-decoration: underline; padding: 4px;
     }
   </style>
 </head>
 <body>
 
-<!-- ── TELA FACE ID (retornando) ────────────────────────────── -->
-<div class="biometric-screen hidden" id="biometricScreen">
-  <div class="face-icon">🔐</div>
-  <h2>Bem-vindo de volta</h2>
-  <p>Use o Face ID ou impressão digital para entrar no MinhaNotas</p>
-  <button class="btn-biometric" onclick="loginWithBiometric()">
-    <span>🔒</span> Usar Face ID / Biometria
-  </button>
-  <button class="btn-skip" onclick="showLoginScreen()">Entrar com Google</button>
-</div>
-
-<!-- ── SETUP BIOMETRIA (após primeiro login) ────────────────── -->
-<div class="setup-biometric hidden" id="setupBiometric">
-  <div class="setup-box">
-    <div class="face-icon">🔐</div>
-    <h3>Ativar Face ID?</h3>
-    <p>Na próxima vez que abrir o app, você entra automaticamente com Face ID ou impressão digital — sem precisar fazer login de novo.</p>
-    <div class="setup-btns">
-      <button class="btn-enable-bio" onclick="enableBiometric()">Ativar Face ID</button>
-      <button class="btn-not-now" onclick="skipBiometric()">Agora não</button>
-    </div>
+<!-- ── MINI POPUP RENOVAR SESSÃO ───────────────────────────── -->
+<div class="renew-overlay hidden" id="renewPrompt">
+  <div class="renew-box">
+    <div style="font-size:32px;">👋</div>
+    <h3>Confirmar acesso</h3>
+    <p>Sua sessão expirou. Toque abaixo para entrar novamente com 1 toque.</p>
+    <button class="btn-renew" onclick="renewLogin()">
+      <img src="https://www.google.com/favicon.ico" width="18" style="vertical-align:middle;margin-right:8px"/>
+      Continuar com Google
+    </button>
+    <button class="btn-skip" onclick="showLoginScreen()">Usar outra conta</button>
   </div>
 </div>
 
@@ -704,152 +643,123 @@
 // ═══════════════════════════════════════════════════════════
 const CONFIG = {
   // 👇 Cole aqui o Client ID do Google Cloud Console (veja CONFIGURACAO.md)
-  CLIENT_ID: '361792653753-k7taijsf55e5ivj2j8a623q846ekv828.apps.googleusercontent.com',
+  CLIENT_ID: 'SEU_CLIENT_ID_AQUI.apps.googleusercontent.com',
   SCOPES: 'https://www.googleapis.com/auth/drive.file',
   FOLDER_NAME: 'MinhaNotas_App',
 };
 
 // ═══════════════════════════════════════════════════════════
-//  BIOMETRIA — WebAuthn (Face ID / Touch ID / Android)
+//  SESSÃO — renovação inteligente do token Google
 //
 //  Como funciona:
-//  1. No primeiro login (Google), pergunta se quer ativar
-//  2. Se sim, registra uma "chave" no dispositivo via WebAuthn
-//  3. Nas próximas aberturas, detecta a chave salva e pede
-//     Face ID para confirmar — sem precisar do Google de novo
+//  1. Primeiro login: Google normal (uma vez)
+//  2. Próximas aberturas: tenta renovar silenciosamente
+//  3. Se não conseguir: mostra mini popup (1 toque), não tela cheia
+//  4. Renova automaticamente a cada 50 minutos em segundo plano
 // ═══════════════════════════════════════════════════════════
 
-const BIO_KEY = 'minhaNotas_bioEnabled';  // localStorage flag
-const CRED_KEY = 'minhaNotas_credId';     // ID da credencial salva
+const SESSION_KEY  = 'minhaNotas_session';   // dados da sessão salva
+const USERNAME_KEY = 'minhaNotas_userName';  // nome do usuário salvo
 
-// Verifica se o dispositivo suporta biometria
-function bioSupported() {
-  return window.PublicKeyCredential !== undefined &&
-         typeof PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable === 'function';
+// Salva dados da sessão
+function saveSession(userName) {
+  localStorage.setItem(SESSION_KEY, JSON.stringify({
+    savedAt: Date.now(),
+    userName,
+  }));
+  if (userName) localStorage.setItem(USERNAME_KEY, userName);
 }
 
-// Ao abrir o app: decide qual tela mostrar
-async function initAuth() {
-  const bioEnabled = localStorage.getItem(BIO_KEY) === 'true';
-
-  if (bioEnabled && bioSupported()) {
-    // Usuário já configurou biometria → mostra tela de Face ID
-    document.getElementById('biometricScreen').classList.remove('hidden');
-    document.getElementById('loginScreen').classList.add('hidden');
-  } else {
-    // Primeiro acesso ou sem suporte → mostra login normal
-    document.getElementById('loginScreen').classList.remove('hidden');
-    document.getElementById('biometricScreen').classList.add('hidden');
-  }
-}
-
-// Chamado ao clicar "Usar Face ID"
-async function loginWithBiometric() {
+// Lê sessão salva
+function loadSession() {
   try {
-    const credIdB64 = localStorage.getItem(CRED_KEY);
-    if (!credIdB64) { showLoginScreen(); return; }
+    return JSON.parse(localStorage.getItem(SESSION_KEY));
+  } catch { return null; }
+}
 
-    // Decodifica o ID da credencial salva
-    const credIdBytes = Uint8Array.from(atob(credIdB64), c => c.charCodeAt(0));
+// Ao abrir o app: tenta renovar silenciosamente
+async function initAuth() {
+  const session = loadSession();
 
-    // Monta o desafio (pode ser qualquer bytes aleatórios)
-    const challenge = crypto.getRandomValues(new Uint8Array(32));
-
-    // Pede ao dispositivo para verificar com biometria
-    const assertion = await navigator.credentials.get({
-      publicKey: {
-        challenge,
-        allowCredentials: [{ id: credIdBytes, type: 'public-key' }],
-        userVerification: 'required',  // obriga Face ID / Touch ID
-        timeout: 60000,
-      }
-    });
-
-    if (assertion) {
-      // Biometria confirmada! Restaura sessão Google salva
-      showToast('✓ Face ID confirmado');
-      await restoreGoogleSession();
-    }
-  } catch (e) {
-    // Usuário cancelou ou falhou
-    showToast('Face ID cancelado — use o Google para entrar');
+  if (session) {
+    // Já teve login antes — tenta renovar silenciosamente
+    const savedName = localStorage.getItem(USERNAME_KEY) || '';
+    document.getElementById('userNameDisplay').textContent = savedName ? '• ' + savedName : '';
+    await trysilentRenew();
+  } else {
+    // Primeira vez — mostra login normal
     showLoginScreen();
   }
 }
 
-// Registra a biometria no dispositivo (só na primeira vez)
-async function enableBiometric() {
-  try {
-    const challenge = crypto.getRandomValues(new Uint8Array(32));
-    const userId    = crypto.getRandomValues(new Uint8Array(16));
-
-    // Cria credencial biométrica no dispositivo
-    const credential = await navigator.credentials.create({
-      publicKey: {
-        challenge,
-        rp: { name: 'MinhaNotas' },          // nome do app
-        user: {
-          id: userId,
-          name: 'usuario@minhaNotas',
-          displayName: 'Usuário MinhaNotas',
+// Tenta renovar o token sem mostrar nada ao usuário
+async function trysilentRenew() {
+  return new Promise((resolve) => {
+    try {
+      state.tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CONFIG.CLIENT_ID,
+        scope: CONFIG.SCOPES,
+        prompt: '',
+        callback: async (resp) => {
+          if (resp.error) {
+            // Renovação silenciosa falhou → mini popup (não tela cheia)
+            showRenewPrompt();
+            resolve(false);
+          } else {
+            // Renovação silenciosa OK → entra direto
+            await afterLogin(true); // true = silencioso (não recarrega notas se já tem)
+            resolve(true);
+          }
         },
-        pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
-        authenticatorSelection: {
-          authenticatorAttachment: 'platform',  // usa biometria do próprio device
-          userVerification: 'required',
-        },
-        timeout: 60000,
-      }
-    });
-
-    // Salva o ID da credencial no localStorage
-    const credId = credential.rawId;
-    const credIdB64 = btoa(String.fromCharCode(...new Uint8Array(credId)));
-    localStorage.setItem(CRED_KEY, credIdB64);
-    localStorage.setItem(BIO_KEY, 'true');
-
-    document.getElementById('setupBiometric').classList.add('hidden');
-    showToast('Face ID ativado com sucesso ✓');
-  } catch (e) {
-    document.getElementById('setupBiometric').classList.add('hidden');
-    showToast('Não foi possível ativar — tente depois nas configurações');
-    console.error('WebAuthn register error:', e);
-  }
+      });
+      state.tokenClient.requestAccessToken({ prompt: '' });
+    } catch(e) {
+      showRenewPrompt();
+      resolve(false);
+    }
+  });
 }
 
-function skipBiometric() {
-  localStorage.setItem(BIO_KEY, 'false');
-  document.getElementById('setupBiometric').classList.add('hidden');
-  showToast('Você pode ativar depois em Configurações');
+// Mini popup discreto (não tela cheia) pedindo 1 toque para renovar
+function showRenewPrompt() {
+  document.getElementById('renewPrompt').classList.remove('hidden');
+}
+
+function hideRenewPrompt() {
+  document.getElementById('renewPrompt').classList.add('hidden');
+}
+
+// Chamado pelo botão do mini popup
+function renewLogin() {
+  hideRenewPrompt();
+  state.tokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: CONFIG.CLIENT_ID,
+    scope: CONFIG.SCOPES,
+    callback: async (resp) => {
+      if (resp.error) {
+        showToast('Erro ao entrar. Tente novamente.');
+        showLoginScreen();
+        return;
+      }
+      await afterLogin(false);
+    },
+  });
+  state.tokenClient.requestAccessToken({ prompt: '' });
+}
+
+// Renovação automática em segundo plano a cada 50 min
+function scheduleTokenRenewal() {
+  setInterval(async () => {
+    if (!gapi.client.getToken()) return;
+    try {
+      state.tokenClient.requestAccessToken({ prompt: '' });
+    } catch(e) {}
+  }, 50 * 60 * 1000); // 50 minutos
 }
 
 function showLoginScreen() {
-  document.getElementById('biometricScreen').classList.add('hidden');
   document.getElementById('loginScreen').classList.remove('hidden');
-}
-
-// Tenta restaurar o token Google após biometria confirmada
-async function restoreGoogleSession() {
-  try {
-    // Solicita novo token silenciosamente (sem popup)
-    state.tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CONFIG.CLIENT_ID,
-      scope: CONFIG.SCOPES,
-      prompt: '',  // sem prompt = silencioso se ainda tiver sessão Google ativa
-      callback: async (resp) => {
-        if (resp.error) {
-          // Sessão Google expirou — precisa logar de novo
-          showToast('Sessão expirada — entre com Google');
-          showLoginScreen();
-          return;
-        }
-        await afterLogin();
-      },
-    });
-    state.tokenClient.requestAccessToken({ prompt: '' });
-  } catch(e) {
-    showLoginScreen();
-  }
+  document.getElementById('renewPrompt').classList.add('hidden');
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -878,37 +788,41 @@ function gapiLoaded() {
 }
 
 function loginGoogle() {
-  // Inicializa o cliente de autenticação Google
   state.tokenClient = google.accounts.oauth2.initTokenClient({
     client_id: CONFIG.CLIENT_ID,
     scope: CONFIG.SCOPES,
     callback: async (resp) => {
       if (resp.error) { showToast('Erro ao entrar: ' + resp.error); return; }
-      await afterLogin();
+      await afterLogin(false);
     },
   });
-  state.tokenClient.requestAccessToken({ prompt: 'consent' });
+  state.tokenClient.requestAccessToken({ prompt: 'select_account' });
 }
 
-async function afterLogin() {
+async function afterLogin(silent = false) {
   // Pega nome do usuário
-  try {
-    const res = await gapi.client.request({ path: 'https://www.googleapis.com/oauth2/v3/userinfo' });
-    const name = res.result.given_name || res.result.name || 'você';
-    document.getElementById('userNameDisplay').textContent = '• ' + name;
-  } catch(e) {}
+  let userName = localStorage.getItem(USERNAME_KEY) || '';
+  if (!silent) {
+    try {
+      const res = await gapi.client.request({ path: 'https://www.googleapis.com/oauth2/v3/userinfo' });
+      userName = res.result.given_name || res.result.name || '';
+    } catch(e) {}
+  }
+
+  // Salva sessão para próxima abertura
+  saveSession(userName);
+  document.getElementById('userNameDisplay').textContent = userName ? '• ' + userName : '';
 
   showApp();
-  await ensureFolder();
-  await loadAllNotes();
 
-  // Oferece ativar Face ID se ainda não configurou e o device suporta
-  const bioEnabled = localStorage.getItem(BIO_KEY);
-  if (bioEnabled === null && bioSupported()) {
-    setTimeout(() => {
-      document.getElementById('setupBiometric').classList.remove('hidden');
-    }, 1500); // pequena pausa para o app carregar antes de perguntar
+  // Só recarrega notas se não for renovação silenciosa com notas já carregadas
+  if (!silent || state.notes.length === 0) {
+    await ensureFolder();
+    await loadAllNotes();
   }
+
+  // Agenda renovação automática em segundo plano
+  scheduleTokenRenewal();
 }
 
 function logout() {
