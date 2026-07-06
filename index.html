@@ -828,6 +828,9 @@ async function afterLogin(silent = false) {
 function logout() {
   google.accounts.oauth2.revoke(gapi.client.getToken()?.access_token, () => {});
   gapi.client.setToken(null);
+  // Limpa sessão salva para forçar escolha de conta no próximo login
+  localStorage.removeItem(SESSION_KEY);
+  localStorage.removeItem(USERNAME_KEY);
   state.notes = [];
   state.folderId = null;
   hideApp();
